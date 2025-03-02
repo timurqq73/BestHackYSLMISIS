@@ -21,7 +21,7 @@ scikit-learn==1.0.2
 Copy
 
 ## Установка
-1. Клонируйте репозиторий:
+Клонируйте репозиторий:
 ```
  git clone https://github.com/timurqq73/rppg-chrom.git
  cd rppg-chrom
@@ -33,6 +33,9 @@ pip install -r requirements.txt
 ```
 
 Запуск
+Скачайте тестовую выборку, разархивируйте и поместите в свой проект
+https://drive.google.com/file/d/1JR3kWxtSNl-tuFy3DKl3ByNH-lHPAUFB/view?usp=drive_link
+
 bash
 ```
 python main.py
