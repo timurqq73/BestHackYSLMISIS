@@ -10,7 +10,6 @@
 1. **Клонируйте репозиторий**
    ```bash
    git clone https://github.com/timurqq73/rppg-chrom.git
-   cd rppg-chrom
    ```
 
 2. **Установите зависимости**
