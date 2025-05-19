@@ -8,26 +8,16 @@ from scipy.interpolate import interp1d
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 def min_max_scaling(signal):
-    """Применяет min–max нормализацию в диапазон [0,1]"""
     return (signal - np.min(signal)) / (np.max(signal) - np.min(signal) + 1e-9)
 
 def remove_trend(signal, order=2):
-    """Удаляет полиномиальный тренд заданного порядка (например, 2-го)"""
     t = np.arange(len(signal))
     poly_coeff = np.polyfit(t, signal, order)
     trend = np.polyval(poly_coeff, t)
     return signal - trend
 
 def extract_rppg_signal_chrom(video_path, low_pass=0.75, high_pass=2.5):
-    """
-    Извлекает rPPG-сигнал с использованием адаптивного CHROM.
-    Улучшения:
-      - ROI формируется на основе объединения областей щёк и лба.
-      - Применяется полиномиальный детрендинг.
-      - Используется полосовой фильтр Баттерворта 2-го порядка.
-      - Применяется сглаживание фильтром Савицкого–Голея.
-      - Итоговый сигнал нормализуется по min–max.
-    """
+  
     mp_face_mesh = mp.solutions.face_mesh
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -106,10 +96,7 @@ def extract_rppg_signal_chrom(video_path, low_pass=0.75, high_pass=2.5):
 
     return times, min_max_scaling(filtered)
 def process_all_videos(dataset_path):
-    """
-    Обрабатывает видео, сравнивает извлечённый rPPG с ground truth,
-    и считает метрики RMSE и MAE.
-    """
+    
     total_rmse, total_mae = [], []
     pairs_processed = 0
 
@@ -127,18 +114,17 @@ def process_all_videos(dataset_path):
 
                 with open(gt_path, 'r') as f:
                     lines = f.readlines()
-                # Проверяем, что в файле достаточно строк
+                
                 if len(lines) < 3:
                     print(f"Ошибка: {gt_file} содержит менее 3 строк! Пропускаем файл.")
                     continue
                 gt_signal = np.array([float(x) for x in lines[0].split()])
                 gt_time = np.array([float(x) for x in lines[2].split()])
 
-                # Интерполяция GT на временные метки, соответствующие извлечённому сигналу
+                
                 f_gt = interp1d(gt_time, gt_signal, kind='linear', fill_value="extrapolate")
                 gt_aligned = f_gt(times)
 
-                # Применяем min–max нормализацию к обоим сигналам
                 gt_aligned = min_max_scaling(gt_aligned)
                 extracted_signal = min_max_scaling(extracted_signal)
 
